@@ -24,6 +24,10 @@ app.get('/error', (req, res) => {
     ckck.fly();
 })
 
+app.get('/admin', (req, res) => {
+    throw new AppError('You are not an Admin!!!!', 403)
+})
+
 app.use('/secret', verifyPassword, (req, res, next) => {
     res.send('/use secret')
 })
@@ -39,9 +43,9 @@ app.use('/secret', verifyPassword, (req, res, next) => {
 //     // res.status(500).send('500')
 // })
 app.use((err, req, res, next) => {
-    const { status = 500 } = err
-    console.log(status)
-    res.status(status).send('ERRORRRRRRRR!')
+    const { status = 500, message = "Somthing Wrong" } = err
+    console.log(status, message)
+    res.status(status).send(message)
 })
 
 app.listen(3000, () => {
