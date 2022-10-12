@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 
+const AppError = require('./AppError')
+
 app.use(morgan('dev'));
 
 const verifyPassword = ((req, res, next) => {
@@ -10,29 +12,36 @@ const verifyPassword = ((req, res, next) => {
         next();
     }
     else {
-        throw new Error();
+        throw new AppError('PASSWORD REQUIRE', 401)
     }
-})
-
-
-
-app.use('/secret', verifyPassword, (req, res, next) => {
-    res.send('/use secret')
-})
-
-app.get('/error', (req, res) => {
-    ckck.fly();
 })
 
 app.get('/', (req, res) => {
     res.send('/')
 })
 
+app.get('/error', (req, res) => {
+    ckck.fly();
+})
+
+app.use('/secret', verifyPassword, (req, res, next) => {
+    res.send('/use secret')
+})
+
+
+
+// app.use((err, req, res, next) => {
+//     console.log('********************************')
+//     console.log('****************Error****************')
+//     console.log('********************************')
+//     console.log(err)
+//     next(err);
+//     // res.status(500).send('500')
+// })
 app.use((err, req, res, next) => {
-    console.log('********************************')
-    console.log('****************Error****************')
-    console.log('********************************')
-    res.status(500).send('500')
+    const { status = 500 } = err
+    console.log(status)
+    res.status(status).send('ERRORRRRRRRR!')
 })
 
 app.listen(3000, () => {
